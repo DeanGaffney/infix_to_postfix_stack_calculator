@@ -21,7 +21,6 @@ public class CalcEngineStackApi {
 	final int MULTIPLY_DIVIDE_PRECEDENCE = 2;
 	final int POWER_OF = 3;
 	final int BRACKET_PRECEDENCE = 4;
-	final int DECIMAL_POINT = 5;
 
 	int operand;
 	String displayValue;
