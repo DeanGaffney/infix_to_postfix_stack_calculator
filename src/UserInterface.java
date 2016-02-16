@@ -103,7 +103,7 @@ public class UserInterface
 	{
 		String command = event.getActionCommand();
 
-		if(command.equals('0') ||
+		if(command.equals("0") ||
 		   command.equals("1") ||
 		   command.equals("2") ||
 		   command.equals("3") ||
@@ -148,6 +148,10 @@ public class UserInterface
 			calc.setDisplayValue(calc.expression);
 		}
 		else if(command.equals("^")){
+			calc.addToExpression(command.charAt(0));
+			calc.setDisplayValue(calc.expression);
+		}
+		else if(command.equals(".")){
 			calc.addToExpression(command.charAt(0));
 			calc.setDisplayValue(calc.expression);
 		}
