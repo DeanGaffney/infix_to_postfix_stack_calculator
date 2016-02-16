@@ -13,8 +13,8 @@ import java.util.Stack;
 
 public class CalcEngineStackApi {
 
-	Stack <Character>calcStack = new Stack<Character>();
-	Stack<Character> calculationStack = new Stack<Character>();
+	Stack calcStack = new Stack();
+	Stack <Integer> postStack = new Stack<Integer>();
 
 	//give each operator a level of precedence.
 	final int ADD_MINUS_PRECEDENCE = 1;
@@ -24,14 +24,14 @@ public class CalcEngineStackApi {
 	final int DECIMAL_POINT = 5;
 	
 	int operand;
-	int displayValue;
+	String displayValue;
 	char operator;
     String expression; // create a string with the full expression
 	String postfixExpression;
 
 	public CalcEngineStackApi(){
 		operator = ' ';
-		displayValue = 0;
+		displayValue = "";
 		operand = 0;
 		expression= "";
 		postfixExpression ="";
@@ -44,27 +44,40 @@ public class CalcEngineStackApi {
 	}
 
 	public String getDisplayValue() {
-		return Integer.toString((displayValue));
-	}
-
-	public void numberPressed(){
-		
+		return displayValue;
 	}
 	
-	public void plus(){
-		
+	public void setDisplayValue(String newChar){
+		displayValue = newChar;
 	}
-	public void minus(){
-		
+
+	public int plus(int number1,int number2){
+		int result = number1+number2;
+		System.out.println("Result form plus method:" + result);
+		return result;
 	}
-	public void multiply(){
-		
+	
+	public int minus(int number1,int number2){
+		int result = number2 - number1;
+		System.out.println("Result from minus method is : "+ result);
+		return result;
 	}
-	public void divide(){
-		
+	
+	public int multiply(int number1, int number2){
+		int result = number1 * number2;
+		System.out.println("Result from multiply method is: "+ result);
+		return result;
 	}
-	public void powerTo(){
-		
+	
+	public int divide(int number1,int number2){
+		int result = number1 / number2;
+		System.out.println("Result from divide method is: "+result);
+		return result;
+	}
+	//return to this method
+	public double powerTo(int number1,int number2){
+		double result = (Math.pow(number2, number1));
+		return result;
 	}
 	public void decimalPoint(){
 		
@@ -72,20 +85,35 @@ public class CalcEngineStackApi {
 	public void equals(){
 		// do infix to postfix transition and calculate
 		convertToPostfix(expression);
-		calculatePostFix(postfixExpression);
+		setDisplayValue(calculatePostFix(postfixExpression));
 	}
 	
 	//this method calculates the result of a given postfix sum.
-	private void calculatePostFix(String postfixExpression) {
-	 /*use a switch statement to go through the characters.
-	  * if its a number then push it onto the stack calculation stack.
-	  * if we see an operator pop two items and operate on them.
-	  * then add this result into the stack.
-	  * eg.
-	  * 11+3* (1+1)*3
-	  * this will result in 1+1 =2		----> Stack now has: 2,3
-	  * so we then pop 2 and 3 and multiply. RESULT = 6 (Correct answer).
-	  */
+	private String calculatePostFix(String postExpression) {
+		for(int i = 0; i < postExpression.length();i++){
+			char currentChar = postExpression.charAt(i);
+			switch(currentChar){
+			case '+':
+				postStack.push(plus((int)postStack.pop(),(int)postStack.pop()));
+				break;
+			case '-':
+				postStack.push(minus((int)postStack.pop(),(int)postStack.pop()));
+				break;
+			case '*':
+				postStack.push(multiply((int)postStack.pop(),(int)postStack.pop()));
+				break;
+			case '/':
+				postStack.push(divide((int)postStack.pop(),(int)postStack.pop()));
+				break;
+			case '^':
+				postStack.push((int)(powerTo((int)postStack.pop(), (int)postStack.pop())));
+				break;
+			default:
+				postStack.push((int)(Character.getNumericValue(currentChar))); //this will mean its a number so push onto stack.
+				System.out.println("Stack is now " + postStack);
+			}
+		}
+		return Integer.toString(postStack.pop());
 	}
 
 	public void hasPrecedenceOver(char thisChar,int precedence1){
@@ -168,10 +196,12 @@ public class CalcEngineStackApi {
 	//method clears the calculator screen and resets any calculations.
     public void clear()
     {
-        displayValue = 0;
+        displayValue = "";
         expression = "";	
         postfixExpression = "";// reset expressions to nothing.
 		operand = 0;
+		calcStack.removeAllElements(); // reset stacks on clear
+		postStack.removeAllElements(); 
     } 
 
 	 public String getTitle()

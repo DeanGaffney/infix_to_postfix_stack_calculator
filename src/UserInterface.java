@@ -47,6 +47,7 @@ public class UserInterface
 	private void makeFrame()
 	{
 		frame = new JFrame(calc.getTitle());
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel contentPane = (JPanel)frame.getContentPane();
 		contentPane.setLayout(new BorderLayout(8, 8));
@@ -114,25 +115,42 @@ public class UserInterface
 		   command.equals("9"))
 		{
 			calc.addToExpression(command.charAt(0));
-			//int number = Integer.parseInt(command);
-			//calc.numberPressed(number);
+			calc.setDisplayValue(calc.expression);
 		}
-		else if(command.equals("+"))
+		else if(command.equals("+")){
 			calc.addToExpression(command.charAt(0));
-		else if(command.equals("-"))
+			calc.setDisplayValue(calc.expression);
+		}
+		else if(command.equals("-")){
 			calc.addToExpression(command.charAt(0));
-		else if(command.equals("="))
+			calc.setDisplayValue(calc.expression);
+		}
+		else if(command.equals("=")){
+			calc.setDisplayValue(calc.expression + "=");
 			calc.equals();
+		}
 		else if(command.equals("C"))
 			calc.clear();
-		else if(command.equals("*"))
+		else if(command.equals("*")){
 			calc.addToExpression(command.charAt(0));
-		else if(command.equals("/"))
+			calc.setDisplayValue(calc.expression);
+		}
+		else if(command.equals("/")){
 			calc.addToExpression(command.charAt(0));
-		else if(command.equals("("))
+			calc.setDisplayValue(calc.expression);
+		}
+		else if(command.equals("(")){
 			calc.addToExpression(command.charAt(0));
-		else if(command.equals(")"))
+			calc.setDisplayValue(calc.expression);
+		}
+		else if(command.equals(")")){
 			calc.addToExpression(command.charAt(0));
+			calc.setDisplayValue(calc.expression);
+		}
+		else if(command.equals("^")){
+			calc.addToExpression(command.charAt(0));
+			calc.setDisplayValue(calc.expression);
+		}
 			
 		redisplay();
 	}
