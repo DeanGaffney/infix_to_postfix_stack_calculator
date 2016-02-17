@@ -1,5 +1,10 @@
 import java.awt.GraphicsConfiguration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @file        CalcEngineStackApi.java
@@ -38,8 +43,13 @@ public class CalcEngineStackApi {
 
 	//Method adds any command (i.e number or operator) to a string expression.
 	public void addToExpression(char character){
-		expression += character;
-		System.out.println(expression);
+		if(isOperator(character)){
+			expression+= " " +character+" "; // adds spaces after a number for regex use.
+		}
+		else{
+			expression += character;
+			System.out.println(expression);
+		}
 	}
 
 	public String getDisplayValue() {
@@ -95,79 +105,70 @@ public class CalcEngineStackApi {
 		return isOperator;
 	}
 
-	/*
-	 * Method takes in the expression when a decimal point occurs.
-	 * It takes the number before the decimal point,the decimal point,
-	 * and all numbers after the point up until an operator is encountered.
-	 * This can then be considered our decimal point number and can be returned.
-	 */
-	private double parseNumber(char decimalChar,int decimalIndex,String expression){
-		String strParsedNumber = "";
-		if(isOperator(expression.charAt(decimalIndex-1))){
-			strParsedNumber += expression.charAt(decimalIndex);
-			decimalIndex++;
-		}
-		else{
-			strParsedNumber += expression.charAt(decimalIndex - 1);
-		}
 
-		while((decimalIndex < expression.length()) && (!isOperator(expression.charAt(decimalIndex)))){
-			strParsedNumber += expression.charAt(decimalIndex);
-			decimalIndex++;
+	private ArrayList<Double> extractNumbers(String expression){
+		ArrayList<Double> extractedGroups = new ArrayList<Double>();
+		String extractedString = expression;
+		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?"); // data/decimal/data
+		Matcher matcher = pattern.matcher(extractedString);
+		while(matcher.find()) {
+			System.out.println(Double.valueOf(matcher.group()));
+			extractedGroups.add(Double.valueOf(matcher.group()));
 		}
-		System.out.println("Postfix decimal number is : "+ strParsedNumber);
-		return Double.parseDouble(strParsedNumber);
+		System.out.println("This is the extracted groups" + extractedGroups);
+		return extractedGroups;
 	}
+
+	/*
+	 * This method calculates a postfix expression by means of a stack and an array
+	 * and the extracted numbers method.
+	 */
+	private String expressionAnalysis(ArrayList<Double> extractedNums,String postExpression){
+		int indexCounter = 0; // used to get number from array for stack.
+		for(int i = 0; i <postExpression.length(); i++){
+			char currentChar = postExpression.charAt(i); //get char
+			switch(currentChar){
+			case ' ':
+				break; //if it's a space do nothing.
+			case '+': //push the result of adding the two popped
+				postStack.push(plus((double)postStack.pop(),(double)postStack.pop()));
+				System.out.println("This is the post stack :" + postStack);
+				break;
+			case '-': //push result of subtracting the two popped.
+				postStack.push(minus((double)postStack.pop(),(double)postStack.pop()));
+				System.out.println("This is the post stack :" + postStack);
+				break;
+			case '*'://push result of multiplying the two popped.
+				postStack.push(multiply((double)postStack.pop(),(double)postStack.pop()));
+				System.out.println("This is the post stack :" + postStack);
+				break;
+			case '/'://push result of dividing two popped.
+				postStack.push(divide((double)postStack.pop(),(double)postStack.pop()));
+				System.out.println("This is the post stack :" + postStack);
+				break;
+			case '^'://push result of power of two popped.
+				postStack.push((double)(powerTo((double)postStack.pop(), (double)postStack.pop())));
+				System.out.println("This is the post stack :" + postStack);
+				break;
+			default:
+				if(postStack.size() == extractedNums.size()){
+					System.out.println("This is the post stack :" + postStack);
+					break; // if the stack has all required numbers break.
+				}
+				postStack.push(extractedNums.get(indexCounter));
+				indexCounter++;// this will push the first number from our array.
+				System.out.println("This is the post stack :" + postStack);
+			}
+		}
+		return Double.toString(postStack.pop());
+	}
+
 
 
 	// do infix to postfix transition and calculate
 	public void equals(){
 		convertToPostfix(expression);
-		setDisplayValue(calculatePostFix(postfixExpression));
-	}
-
-	//this method calculates the result of a given postfix sum.
-	private String calculatePostFix(String postExpression) {
-		int decimalController = 0;
-		int flowController = 0;
-		for(int i = 0; i < postExpression.length();i++){
-			char currentChar = postExpression.charAt(i);
-			switch(currentChar){
-			case '+':
-				postStack.push(plus((double)postStack.pop(),(double)postStack.pop()));
-				break;
-			case '-':
-				postStack.push(minus((double)postStack.pop(),(double)postStack.pop()));
-				break;
-			case '*':
-				postStack.push(multiply((double)postStack.pop(),(double)postStack.pop()));
-				break;
-			case '/':
-				postStack.push(divide((double)postStack.pop(),(double)postStack.pop()));
-				break;
-			case '^':
-				postStack.push((double)(powerTo((double)postStack.pop(), (double)postStack.pop())));
-				break;
-			case '.':
-				postStack.push(parseNumber(currentChar,i,expression));
-				System.out.println("Stack is now: "+ postStack);
-				++decimalController;
-				break;
-			default:
-				if(flowController == decimalController-1){ // this will avoid adding the post decimal
-					flowController++; 						// numbers to the stack and skip them.
-					break;
-				}
-				else{
-						String tempString = "";
-						tempString+=currentChar;
-						System.out.println("This will be pushed to stack: "+tempString);
-						postStack.push(Double.parseDouble(tempString)); //this will mean its a number so push onto stack.
-						System.out.printf("Stack is now " + postStack); // format this to 3 decimal places
-					}
-			}
-		}
-		return Double.toString(postStack.pop());
+		setDisplayValue(expressionAnalysis(extractNumbers(expression),postfixExpression));
 	}
 
 	private void hasPrecedenceOver(char thisChar,int precedence1){
@@ -226,7 +227,7 @@ public class CalcEngineStackApi {
 				break;
 			case '+':
 			case '-':
-				hasPrecedenceOver(currentChar,1);
+				hasPrecedenceOver(currentChar,1); //check precedence
 				break;
 			case '/':
 			case '*':
@@ -237,7 +238,7 @@ public class CalcEngineStackApi {
 				break;
 			case '.':
 				postfixExpression += '.';
-				System.out.println("After decimal point:" + postfixExpression);
+				System.out.println("After decimal point:" + postfixExpression); //add decimal point to expression
 				break;
 			default:
 				postfixExpression += currentChar; 	//this will be an operand.
@@ -245,7 +246,7 @@ public class CalcEngineStackApi {
 		}
 
 		while(!calcStack.isEmpty()){
-			postfixExpression += calcStack.pop();
+			postfixExpression += calcStack.pop(); //populates the postfix expression.
 			System.out.println(postfixExpression);
 		}
 		System.out.println("Postfix Expression is: " + postfixExpression);
@@ -254,7 +255,7 @@ public class CalcEngineStackApi {
 	//method clears the calculator screen and resets any calculations.
 	public void clear()
 	{
-		displayValue = "";
+		displayValue = "Cleared.";
 		expression = "";	
 		postfixExpression = "";// reset expressions to nothing.
 		operand = 0;
@@ -272,15 +273,8 @@ public class CalcEngineStackApi {
 		return("Dean Gaffney");
 	}
 
-	/**
-	 * Return the version number of this engine. This string is displayed as 
-	 * it is, so it should say something like "Version 1.1".
-	 */
 	public String getVersion()
 	{
 		return("Ver. 1.0");
 	}
-
-
-
 }
