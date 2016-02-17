@@ -44,7 +44,7 @@ public class CalcEngineStackApi {
 	//Method adds any command (i.e number or operator) to a string expression.
 	public void addToExpression(char character){
 		if(isOperator(character)){
-			expression+= " " +character+" "; // adds spaces after a number for regex use.
+			expression+= character+" "; // adds spaces after a number for regex use.
 		}
 		else{
 			expression += character;
@@ -125,11 +125,25 @@ public class CalcEngineStackApi {
 	 */
 	private String expressionAnalysis(ArrayList<Double> extractedNums,String postExpression){
 		int indexCounter = 0; // used to get number from array for stack.
+		int cycle = 1;
 		for(int i = 0; i <postExpression.length(); i++){
 			char currentChar = postExpression.charAt(i); //get char
 			switch(currentChar){
 			case ' ':
-				break; //if it's a space do nothing.
+				if(postStack.size() == extractedNums.size()){
+					break;
+				}
+				else{
+					if(indexCounter == extractedNums.size()){
+						break;
+					}
+					postStack.push(extractedNums.get(indexCounter));
+					// this will push the first number from our array.
+					System.out.println("This is the post stack :" + postStack);
+					indexCounter++;
+					break;
+				}
+				//if it's a space do increment.
 			case '+': //push the result of adding the two popped
 				postStack.push(plus((double)postStack.pop(),(double)postStack.pop()));
 				System.out.println("This is the post stack :" + postStack);
@@ -151,13 +165,20 @@ public class CalcEngineStackApi {
 				System.out.println("This is the post stack :" + postStack);
 				break;
 			default:
+				if(cycle ==1){
+					postStack.push(extractedNums.get(indexCounter));
+					// this will push the first number from our array.
+					System.out.println("This is the post stack :" + postStack);
+					indexCounter++;
+					cycle ++;
+					break;
+				}
 				if(postStack.size() == extractedNums.size()){
 					System.out.println("This is the post stack :" + postStack);
 					break; // if the stack has all required numbers break.
 				}
-				postStack.push(extractedNums.get(indexCounter));
-				indexCounter++;// this will push the first number from our array.
-				System.out.println("This is the post stack :" + postStack);
+				else
+					break;
 			}
 		}
 		return Double.toString(postStack.pop());
@@ -246,7 +267,7 @@ public class CalcEngineStackApi {
 		}
 
 		while(!calcStack.isEmpty()){
-			postfixExpression += calcStack.pop(); //populates the postfix expression.
+			postfixExpression += " " +calcStack.pop(); //populates the postfix expression.
 			System.out.println(postfixExpression);
 		}
 		System.out.println("Postfix Expression is: " + postfixExpression);
