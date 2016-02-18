@@ -16,7 +16,7 @@ public class MyStack <E>{ // make the class generic to accept all data types.
 	public MyStack(){
 		size = 25; //just a default capacity.
 		top = -1; //start it at -1 to show stack is empty
-		stack = (E[]) new Object[size];
+		stack = (E[]) new Object[size]; // make array of type E(generic) cast of object.
 	}
 	
 	//method pushes an object onto the stack.

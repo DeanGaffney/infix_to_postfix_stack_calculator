@@ -17,8 +17,6 @@ import java.util.regex.Pattern;
  */
 
 public class CalcEngineMyStack {
-	//Stack calcStack = new Stack();
-	//Stack <Double> postStack = new Stack<Double>();
 	MyStack calcStack = new MyStack();
 	MyStack postStack = new MyStack();
 	//give each operator a level of precedence.
@@ -88,7 +86,8 @@ public class CalcEngineMyStack {
 		double result = (Math.pow(number2, number1));
 		return result;
 	}
-
+	
+	//method returns true if a character is an operator,false otherwise.
 	private boolean isOperator(char testChar){
 		boolean isOperator = false;
 		switch(testChar){
@@ -105,7 +104,13 @@ public class CalcEngineMyStack {
 		return isOperator;
 	}
 
-
+	/*
+	 * This method takes in the original expression entered into the calculator 
+	 * and extracts all of the numbers within the expression and adds them to an array list.
+	 * This array list is used to keep track of correct number placement during calculations.
+	 * I use Regex to search for a digit folowwed by a decimal point folowwed by more digits.
+	 * Eg. 12.5 + 1.5+ 3.0 ---> Array = [12.5, 1.5,3.0]
+	 */
 	private ArrayList<Double> extractNumbers(String expression){
 		ArrayList<Double> extractedGroups = new ArrayList<Double>();
 		String extractedString = expression;
