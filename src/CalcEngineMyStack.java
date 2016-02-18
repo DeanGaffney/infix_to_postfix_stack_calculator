@@ -7,20 +7,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @file        CalcEngineStackApi.java
+ * @file        CalcEngineMyStack.java
  * @author      Dean Gaffney 20067423
- * @assignment  Calculator engine using the java stack class.
- * @brief       Creating a calculator engine with the standard java stack class.
+ * @assignment  Calculator engine using the my own stack class.
+ * @brief       Creating a calculator engine with the my own implementation of the stack class.
  *
  * @notes       
  * 				
  */
 
-public class CalcEngineStackApi {
-
-	Stack calcStack = new Stack();
-	Stack <Double> postStack = new Stack<Double>();
-
+public class CalcEngineMyStack {
+	//Stack calcStack = new Stack();
+	//Stack <Double> postStack = new Stack<Double>();
+	MyStack calcStack = new MyStack();
+	MyStack postStack = new MyStack();
 	//give each operator a level of precedence.
 	final int ADD_MINUS_PRECEDENCE = 1;
 	final int MULTIPLY_DIVIDE_PRECEDENCE = 2;
@@ -33,7 +33,7 @@ public class CalcEngineStackApi {
 	String expression; // create a string with the full expression
 	String postfixExpression;
 
-	public CalcEngineStackApi(){
+	public CalcEngineMyStack(){
 		operator = ' ';
 		displayValue = "";
 		operand = 0;
@@ -111,7 +111,7 @@ public class CalcEngineStackApi {
 		String extractedString = expression;
 		Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?"); // data/decimal/data
 		Matcher matcher = pattern.matcher(extractedString);
-		while(matcher.find()) {
+		while(matcher.find()){
 			System.out.println(Double.valueOf(matcher.group()));
 			extractedGroups.add(Double.valueOf(matcher.group()));
 		}
@@ -180,7 +180,7 @@ public class CalcEngineStackApi {
 					break;
 			}
 		}
-		return Double.toString(postStack.pop());
+		return Double.toString((double) postStack.pop());
 	}
 
 
@@ -298,3 +298,5 @@ public class CalcEngineStackApi {
 		return("Ver. 1.0");
 	}
 }
+
+

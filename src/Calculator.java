@@ -8,7 +8,7 @@
  */
 public class Calculator
 {
-	private CalcEngineStackApi engine;
+	private CalcEngineMyStack engine;
 	private UserInterface gui;
 
 	/**
@@ -16,7 +16,7 @@ public class Calculator
 	 */
 	public Calculator()
 	{
-		engine = new CalcEngineStackApi();
+		engine = new CalcEngineMyStack();
 		gui = new UserInterface(engine);
 	}
 

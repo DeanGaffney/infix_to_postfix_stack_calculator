@@ -14,7 +14,7 @@ import javax.swing.border.*;
 public class UserInterface
 	implements ActionListener
 {
-	private CalcEngineStackApi calc;
+	private CalcEngineMyStack calc;
 	private boolean showingAuthor;
 
     private JFrame frame;
@@ -24,7 +24,7 @@ public class UserInterface
 	/**
 	 * Create a user interface for a given calcEngine.
 	 */
-	public UserInterface(CalcEngineStackApi engine)
+	public UserInterface(CalcEngineMyStack engine)
 	{
 		calc = engine;
 		showingAuthor = true;
